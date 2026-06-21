@@ -24,7 +24,7 @@ const mobileMenu = ref(false)
           to="/"
           class="text-3xl font-black"
         >
-          AUTO<span class="text-red-500">HUB</span>
+          Haxon<span class="text-red-500">Autimotive</span>
         </router-link>
 
         <!-- Desktop -->
