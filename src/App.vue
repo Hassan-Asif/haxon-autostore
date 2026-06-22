@@ -1,6 +1,9 @@
 <script setup>
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+
+import { Toaster } from 'vue-sonner'
+import 'vue-sonner/style.css'
 </script>
 
 <template>
@@ -9,6 +12,13 @@ import Footer from './components/Footer.vue'
 
     <main>
       <RouterView />
+      <Toaster
+    position="top-right"
+    richColors
+    closeButton
+    expand
+    theme="dark"
+  />
     </main>
 
     <Footer />

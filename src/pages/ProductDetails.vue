@@ -3,6 +3,8 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
 import { useCartStore } from '../stores/cartStore'
+import { toast } from 'vue-sonner'
+
 
 const route = useRoute()
 const productStore = useProductStore()
@@ -94,8 +96,10 @@ const whatsappLink = computed(() => {
 const addToCart = () => {
   if (!product.value) return
 
+
   cartStore.addToCart(product.value)
-  alert('Product added to cart.')
+  
+toast.success('Product added successfully.')
 }
 </script>
 
