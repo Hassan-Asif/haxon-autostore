@@ -5,7 +5,9 @@ import {
   collection,
   serverTimestamp,
 } from 'firebase/firestore'
+
 import { db } from '../../firebase/config'
+import { uploadProductImage } from '../../services/imageService'
 
 const form = ref({
   name: '',
@@ -17,71 +19,96 @@ const form = ref({
   availabilityStatus: 'Available on Confirmation',
   estimatedDelivery: '2-3 Days',
   isFeatured: false,
-  image: '',
+
+  imageFile: null,
+  imagePreview: '',
 })
 
 const loading = ref(false)
+
+const resetForm = () => {
+  if (form.value.imagePreview) {
+    URL.revokeObjectURL(form.value.imagePreview)
+  }
+
+  form.value = {
+    name: '',
+    category: '',
+    description: '',
+    carBrand: '',
+    carModel: '',
+    price: '',
+    availabilityStatus: 'Available on Confirmation',
+    estimatedDelivery: '2-3 Days',
+    isFeatured: false,
+
+    imageFile: null,
+    imagePreview: '',
+  }
+}
 
 const handleImage = (event) => {
   const file = event.target.files[0]
 
   if (!file) return
 
-  if (file.size > 1024 * 1024) {
-    alert('Please select an image under 1MB.')
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+  ]
+
+  if (!allowedTypes.includes(file.type)) {
+    alert('Please select a JPG, PNG, or WEBP image.')
     return
   }
 
-  const reader = new FileReader()
-
-  reader.onload = (e) => {
-    form.value.image = e.target.result
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Please select an image under 5MB.')
+    return
   }
 
-  reader.readAsDataURL(file)
+  if (form.value.imagePreview) {
+    URL.revokeObjectURL(form.value.imagePreview)
+  }
+
+  form.value.imageFile = file
+  form.value.imagePreview = URL.createObjectURL(file)
 }
 
 const saveProduct = async () => {
   try {
     loading.value = true
 
+    let uploadedImage = null
+
+    if (form.value.imageFile) {
+      uploadedImage = await uploadProductImage(form.value.imageFile)
+    }
+
     await addDoc(collection(db, 'products'), {
-      name: form.value.name,
+      name: form.value.name.trim(),
       category: form.value.category,
-      description: form.value.description,
-      carBrand: form.value.carBrand,
-      carModel: form.value.carModel,
+      description: form.value.description.trim(),
+      carBrand: form.value.carBrand.trim(),
+      carModel: form.value.carModel.trim(),
       price: Number(form.value.price),
-      availabilityStatus:
-        form.value.availabilityStatus,
-      estimatedDelivery:
-        form.value.estimatedDelivery,
+      availabilityStatus: form.value.availabilityStatus,
+      estimatedDelivery: form.value.estimatedDelivery,
       isFeatured: form.value.isFeatured,
       isActive: true,
-      image:
-        form.value.image ||
-        '/images/no-image.jpg',
+
+      image: uploadedImage?.url || '/images/no-image.jpg',
+      imagePath: uploadedImage?.path || '',
+
       createdAt: serverTimestamp(),
     })
 
     alert('Product Added Successfully!')
-
-    form.value = {
-      name: '',
-      category: '',
-      description: '',
-      carBrand: '',
-      carModel: '',
-      price: '',
-      availabilityStatus:
-        'Available on Confirmation',
-      estimatedDelivery: '2-3 Days',
-      isFeatured: false,
-      image: '',
-    }
+    resetForm()
   } catch (err) {
     console.error(err)
-    alert('Failed to add product.')
+    alert(err.message || 'Failed to add product.')
   } finally {
     loading.value = false
   }
@@ -94,9 +121,7 @@ const saveProduct = async () => {
       Add Product
     </h1>
 
-    <div
-      class="bg-white shadow rounded-2xl p-6 space-y-4"
-    >
+    <div class="bg-white shadow rounded-2xl p-6 space-y-4">
       <input
         v-model="form.name"
         placeholder="Product Name"
@@ -111,25 +136,11 @@ const saveProduct = async () => {
           Select Category
         </option>
 
-        <option>
-          Exterior Accessories
-        </option>
-
-        <option>
-          Interior Accessories
-        </option>
-
-        <option>
-          LED & Lighting
-        </option>
-
-        <option>
-          Car Care
-        </option>
-
-        <option>
-          Security & Utility
-        </option>
+        <option>Exterior Accessories</option>
+        <option>Interior Accessories</option>
+        <option>LED & Lighting</option>
+        <option>Car Care</option>
+        <option>Security & Utility</option>
       </select>
 
       <textarea
@@ -162,21 +173,10 @@ const saveProduct = async () => {
         v-model="form.availabilityStatus"
         class="w-full border rounded-lg p-3"
       >
-        <option>
-          Available on Confirmation
-        </option>
-
-        <option>
-          Usually Dispatched in 2–3 Days
-        </option>
-
-        <option>
-          Check Availability
-        </option>
-
-        <option>
-          Out of Stock
-        </option>
+        <option>Available on Confirmation</option>
+        <option>Usually Dispatched in 2–3 Days</option>
+        <option>Check Availability</option>
+        <option>Out of Stock</option>
       </select>
 
       <input
@@ -185,38 +185,26 @@ const saveProduct = async () => {
         class="w-full border rounded-lg p-3"
       />
 
-      <!-- Image Upload -->
       <div>
-        <label
-          class="block mb-2 font-medium"
-        >
+        <label class="block mb-2 font-medium">
           Product Image
         </label>
 
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           @change="handleImage"
           class="w-full border rounded-lg p-3"
         />
 
         <img
-          v-if="form.image"
-          :src="form.image"
-          class="
-            mt-4
-            w-40
-            h-40
-            object-cover
-            rounded-lg
-            border
-          "
+          v-if="form.imagePreview"
+          :src="form.imagePreview"
+          class="mt-4 w-40 h-40 object-cover rounded-lg border"
         />
       </div>
 
-      <label
-        class="flex items-center gap-3"
-      >
+      <label class="flex items-center gap-3">
         <input
           v-model="form.isFeatured"
           type="checkbox"
@@ -228,15 +216,7 @@ const saveProduct = async () => {
       <button
         @click="saveProduct"
         :disabled="loading"
-        class="
-          bg-red-600
-          hover:bg-red-700
-          text-white
-          px-6
-          py-3
-          rounded-lg
-          transition
-        "
+        class="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white px-6 py-3 rounded-lg transition"
       >
         {{
           loading
