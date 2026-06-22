@@ -17,9 +17,29 @@ const form = ref({
   availabilityStatus: 'Available on Confirmation',
   estimatedDelivery: '2-3 Days',
   isFeatured: false,
+  image: '',
 })
 
 const loading = ref(false)
+
+const handleImage = (event) => {
+  const file = event.target.files[0]
+
+  if (!file) return
+
+  if (file.size > 1024 * 1024) {
+    alert('Please select an image under 1MB.')
+    return
+  }
+
+  const reader = new FileReader()
+
+  reader.onload = (e) => {
+    form.value.image = e.target.result
+  }
+
+  reader.readAsDataURL(file)
+}
 
 const saveProduct = async () => {
   try {
@@ -39,6 +59,7 @@ const saveProduct = async () => {
       isFeatured: form.value.isFeatured,
       isActive: true,
       image:
+        form.value.image ||
         '/images/no-image.jpg',
       createdAt: serverTimestamp(),
     })
@@ -56,6 +77,7 @@ const saveProduct = async () => {
         'Available on Confirmation',
       estimatedDelivery: '2-3 Days',
       isFeatured: false,
+      image: '',
     }
   } catch (err) {
     console.error(err)
@@ -72,7 +94,9 @@ const saveProduct = async () => {
       Add Product
     </h1>
 
-    <div class="bg-white shadow rounded-2xl p-6 space-y-4">
+    <div
+      class="bg-white shadow rounded-2xl p-6 space-y-4"
+    >
       <input
         v-model="form.name"
         placeholder="Product Name"
@@ -83,12 +107,29 @@ const saveProduct = async () => {
         v-model="form.category"
         class="w-full border rounded-lg p-3"
       >
-        <option value="">Select Category</option>
-        <option>Exterior Accessories</option>
-        <option>Interior Accessories</option>
-        <option>LED & Lighting</option>
-        <option>Car Care</option>
-        <option>Security & Utility</option>
+        <option value="">
+          Select Category
+        </option>
+
+        <option>
+          Exterior Accessories
+        </option>
+
+        <option>
+          Interior Accessories
+        </option>
+
+        <option>
+          LED & Lighting
+        </option>
+
+        <option>
+          Car Care
+        </option>
+
+        <option>
+          Security & Utility
+        </option>
       </select>
 
       <textarea
@@ -124,12 +165,15 @@ const saveProduct = async () => {
         <option>
           Available on Confirmation
         </option>
+
         <option>
           Usually Dispatched in 2–3 Days
         </option>
+
         <option>
           Check Availability
         </option>
+
         <option>
           Out of Stock
         </option>
@@ -141,20 +185,64 @@ const saveProduct = async () => {
         class="w-full border rounded-lg p-3"
       />
 
-      <label class="flex items-center gap-3">
+      <!-- Image Upload -->
+      <div>
+        <label
+          class="block mb-2 font-medium"
+        >
+          Product Image
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          @change="handleImage"
+          class="w-full border rounded-lg p-3"
+        />
+
+        <img
+          v-if="form.image"
+          :src="form.image"
+          class="
+            mt-4
+            w-40
+            h-40
+            object-cover
+            rounded-lg
+            border
+          "
+        />
+      </div>
+
+      <label
+        class="flex items-center gap-3"
+      >
         <input
           v-model="form.isFeatured"
           type="checkbox"
         />
+
         Featured Product
       </label>
 
       <button
         @click="saveProduct"
         :disabled="loading"
-        class="bg-red-600 text-white px-6 py-3 rounded-lg"
+        class="
+          bg-red-600
+          hover:bg-red-700
+          text-white
+          px-6
+          py-3
+          rounded-lg
+          transition
+        "
       >
-        {{ loading ? 'Saving...' : 'Save Product' }}
+        {{
+          loading
+            ? 'Saving...'
+            : 'Save Product'
+        }}
       </button>
     </div>
   </div>
