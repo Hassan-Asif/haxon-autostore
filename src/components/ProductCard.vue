@@ -11,13 +11,15 @@ defineProps({
   <div
     class="
       bg-white
-      rounded-2xl
+      rounded-xl
       shadow-md
-      hover:shadow-2xl
+      hover:shadow-xl
       hover:-translate-y-1
       transition
       duration-300
       overflow-hidden
+      border
+      border-slate-100
     "
   >
     <img
@@ -26,21 +28,22 @@ defineProps({
         '/images/no-image.jpg'
       "
       :alt="product.name"
-      class="w-full h-60 object-cover"
+      class="w-full h-32 md:h-56 object-cover"
       @error="
         $event.target.src =
           '/images/no-image.jpg'
       "
     />
 
-    <div class="p-5">
+    <div class="p-3 md:p-5">
       <span
         class="
           inline-block
           bg-slate-100
           text-slate-600
-          text-xs
-          px-3
+          text-[10px]
+          md:text-xs
+          px-2
           py-1
           rounded-full
         "
@@ -50,10 +53,12 @@ defineProps({
 
       <h3
         class="
-          font-bold
-          text-lg
-          mt-4
+          font-semibold
+          text-sm
+          md:text-lg
+          mt-2
           line-clamp-2
+          min-h-[40px]
         "
       >
         {{ product.name }}
@@ -62,9 +67,10 @@ defineProps({
       <p
         class="
           text-red-600
-          text-2xl
+          text-base
+          md:text-2xl
           font-bold
-          mt-4
+          mt-2
         "
       >
         Rs. {{ product.price }}
@@ -72,9 +78,11 @@ defineProps({
 
       <p
         class="
-          text-sm
+          text-[11px]
+          md:text-sm
           text-gray-500
-          mt-3
+          mt-1
+          line-clamp-2
         "
       >
         {{ product.availabilityStatus }}
@@ -85,14 +93,18 @@ defineProps({
         class="
           block
           w-full
-          mt-5
+          mt-3
           bg-slate-900
           hover:bg-red-600
           text-white
-          py-3
-          rounded-xl
+          py-2
+          md:py-3
+          text-xs
+          md:text-base
+          rounded-lg
           text-center
           transition
+          font-medium
         "
       >
         View Product
