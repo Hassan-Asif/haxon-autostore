@@ -5,7 +5,7 @@ import FeaturedCollections from '../components/home/FeaturedCollections.vue'
 import BrandStrip from '../components/home/BrandStrip.vue'
 import FeaturedProducts from '../components/home/FeaturedProducts.vue'
 import HaxonStandard from '../components/home/HaxonStandard.vue'
-// import EditorialSection from '../components/home/EditorialSection.vue'
+import EditorialSection from '../components/home/EditorialSection.vue'
 // import Newsletter from '../components/home/Newsletter.vue'
 </script>
 
@@ -17,7 +17,7 @@ import HaxonStandard from '../components/home/HaxonStandard.vue'
     <BrandStrip />
     <FeaturedProducts />
     <HaxonStandard />
-    <!-- <EditorialSection />
-    <Newsletter /> -->
+    <!-- <EditorialSection /> -->
+    <!-- <Newsletter /> -->
   </div>
 </template>

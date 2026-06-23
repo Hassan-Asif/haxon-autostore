@@ -17,7 +17,7 @@ import 'vue-sonner/style.css'
       <RouterView />
     </main>
 
-    <!-- <Footer /> -->
+    <Footer />
 
     <!-- Toasts -->
     <Toaster
