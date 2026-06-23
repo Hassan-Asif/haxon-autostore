@@ -1,21 +1,23 @@
 <script setup>
-import HeroSlider from '../components/home/HeroSlider.vue'
+import HeroSection from '../components/home/HeroSection.vue'
+import VehicleFinder from '../components/home/VehicleFinder.vue'
+import FeaturedCollections from '../components/home/FeaturedCollections.vue'
 import BrandStrip from '../components/home/BrandStrip.vue'
-import TrustStrip from '../components/home/TrustStrip.vue';
-import CategoryGrid from '../components/home/CategoryGrid.vue'
 import FeaturedProducts from '../components/home/FeaturedProducts.vue'
-import WhyChooseUs from '../components/home/WhyChooseUs.vue'
-import CTASection from '../components/home/CTASection.vue'
+import HaxonStandard from '../components/home/HaxonStandard.vue'
+import EditorialSection from '../components/home/EditorialSection.vue'
+import Newsletter from '../components/home/Newsletter.vue'
 </script>
 
 <template>
-  <div class="bg-[#121212] text-white overflow-hidden">
-    <HeroSlider />
+  <div class="bg-[#F6F6F4] text-[#121212] overflow-hidden">
+    <HeroSection />
+    <VehicleFinder />
+    <FeaturedCollections />
     <BrandStrip />
-    <TrustStrip />
-    <CategoryGrid />
     <FeaturedProducts />
-    <WhyChooseUs />
-    <CTASection />
+    <HaxonStandard />
+    <EditorialSection />
+    <Newsletter />
   </div>
 </template>
