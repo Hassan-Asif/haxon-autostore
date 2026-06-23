@@ -1,7 +1,7 @@
 <script setup>
 import HeroSection from '../components/home/HeroSection.vue'
 import VehicleFinder from '../components/home/VehicleFinder.vue'
-// import FeaturedCollections from '../components/home/FeaturedCollections.vue'
+import FeaturedCollections from '../components/home/FeaturedCollections.vue'
 import BrandStrip from '../components/home/BrandStrip.vue'
 import FeaturedProducts from '../components/home/FeaturedProducts.vue'
 // import HaxonStandard from '../components/home/HaxonStandard.vue'
@@ -13,7 +13,7 @@ import FeaturedProducts from '../components/home/FeaturedProducts.vue'
   <div class="bg-[#F6F6F4] text-[#121212] overflow-hidden">
     <HeroSection />
     <VehicleFinder />
-    <!-- <FeaturedCollections /> -->
+    <FeaturedCollections />
     <!-- <BrandStrip />
     <FeaturedProducts /> -->
     <!-- <HaxonStandard />
