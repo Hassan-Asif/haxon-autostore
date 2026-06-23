@@ -14,8 +14,8 @@ import FeaturedProducts from '../components/home/FeaturedProducts.vue'
     <HeroSection />
     <VehicleFinder />
     <FeaturedCollections />
-    <!-- <BrandStrip />
-    <FeaturedProducts /> -->
+    <BrandStrip />
+    <!-- <FeaturedProducts /> -->
     <!-- <HaxonStandard />
     <EditorialSection />
     <Newsletter /> -->
