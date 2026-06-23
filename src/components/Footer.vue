@@ -4,127 +4,125 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
-const isAdmin = computed(() => {
-  return route.path.startsWith('/admin')
-})
+const year = new Date().getFullYear()
+
+const isAdmin = computed(() => route.path.startsWith('/admin'))
+
+const links = [
+  { label: 'Home', to: '/' },
+  { label: 'Shop', to: '/products' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'Cart', to: '/cart' },
+]
+
+const adminLinks = [
+  { label: 'Dashboard', to: '/admin' },
+  { label: 'Products', to: '/admin/products' },
+  { label: 'Orders', to: '/admin/orders' },
+  { label: 'View Store', to: '/' },
+]
 </script>
 
 <template>
   <footer
     v-if="!isAdmin"
-    class="bg-[#121212] text-white border-t border-white/10"
+    class="relative overflow-hidden border-t border-white/10 bg-[#070707] text-white"
   >
-    <div class="max-w-7xl mx-auto px-6 py-14">
-      <div class="grid md:grid-cols-4 gap-10">
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-12 h-12 rounded-2xl bg-[#D90429] flex items-center justify-center font-black text-2xl shadow-lg shadow-[#D90429]/25">
-              H
-            </div>
+    <div class="pointer-events-none absolute inset-0 opacity-[0.035]">
+      <div
+        class="h-full w-full"
+        style="
+          background-image:
+            linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+            linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+          background-size: 44px 44px;
+        "
+      ></div>
+    </div>
 
-            <div>
-              <h3 class="text-3xl font-black leading-none">
-                Haxon
-              </h3>
+    <div class="pointer-events-none absolute right-[-180px] top-[-180px] h-[420px] w-[420px] rounded-full bg-[#d90429]/8 blur-[140px]"></div>
 
-              <p class="text-xs tracking-[0.32em] uppercase text-[#C0C0C0] mt-1">
-                Automotive
-              </p>
-            </div>
-          </div>
+    <div class="relative mx-auto max-w-7xl px-5 py-14 sm:px-6 lg:px-8">
+      <div class="grid gap-10 lg:grid-cols-[1.4fr_0.7fr_0.9fr]">
+        <div>
+          <router-link to="/" class="inline-block leading-none">
+            <span class="block text-4xl font-black tracking-[0.24em]">
+              HAXON
+            </span>
 
-          <p class="text-[#C0C0C0] max-w-md leading-relaxed">
-            Premium car accessories, lighting, multimedia, emergency tools,
-            and interior upgrades delivered across Pakistan.
+            <span class="mt-2 block text-[10px] font-black uppercase tracking-[0.44em] text-[#d90429]">
+              Automotive Goods
+            </span>
+          </router-link>
+
+          <p class="mt-6 max-w-md text-sm leading-7 text-white/55">
+            Curated car accessories, lighting, multimedia, emergency tools and
+            interior upgrades delivered across Pakistan.
           </p>
 
-          <div class="mt-6 flex flex-wrap gap-3">
-            <span class="border border-white/10 rounded-full px-4 py-2 text-sm text-[#C0C0C0]">
-              Matte Black
+          <div class="mt-7 flex flex-wrap gap-3">
+            <span class="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-white/45">
+              Verified Fitment
             </span>
 
-            <span class="border border-white/10 rounded-full px-4 py-2 text-sm text-[#C0C0C0]">
-              Performance Red
+            <span class="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-white/45">
+              Clean Pricing
             </span>
 
-            <span class="border border-white/10 rounded-full px-4 py-2 text-sm text-[#C0C0C0]">
-              Premium Finish
+            <span class="rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-white/45">
+              Pakistan Delivery
             </span>
           </div>
         </div>
 
         <div>
-          <h3 class="font-bold mb-5 text-white">
-            Quick Links
+          <h3 class="text-[10px] font-black uppercase tracking-[0.34em] text-white/35">
+            Explore
           </h3>
 
-          <div class="space-y-3">
+          <div class="mt-6 space-y-3">
             <router-link
-              to="/"
-              class="block text-[#C0C0C0] hover:text-[#D90429] transition"
+              v-for="link in links"
+              :key="link.label"
+              :to="link.to"
+              class="block text-sm font-semibold text-white/55 transition hover:text-[#d90429]"
             >
-              Home
-            </router-link>
-
-            <router-link
-              to="/products"
-              class="block text-[#C0C0C0] hover:text-[#D90429] transition"
-            >
-              Shop
-            </router-link>
-
-            <router-link
-              to="/contact"
-              class="block text-[#C0C0C0] hover:text-[#D90429] transition"
-            >
-              Contact
-            </router-link>
-
-            <router-link
-              to="/cart"
-              class="block text-[#C0C0C0] hover:text-[#D90429] transition"
-            >
-              Cart
+              {{ link.label }}
             </router-link>
           </div>
         </div>
 
         <div>
-          <h3 class="font-bold mb-5 text-white">
+          <h3 class="text-[10px] font-black uppercase tracking-[0.34em] text-white/35">
             Contact
           </h3>
 
-          <div class="space-y-3 text-[#C0C0C0]">
+          <div class="mt-6 space-y-3 text-sm leading-6 text-white/55">
             <p>
               WhatsApp:
-              <span class="text-white font-medium">
+              <span class="font-semibold text-white">
                 +92 326 3972241
               </span>
             </p>
 
-            <p>
-              Karachi, Pakistan
-            </p>
-
-            <p>
-              Delivery across Pakistan
-            </p>
+            <p>Karachi, Pakistan</p>
+            <p>Delivery across Pakistan</p>
           </div>
 
           <a
             href="https://wa.me/923263972241"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex mt-5 bg-[#D90429] hover:bg-red-700 text-white px-5 py-3 rounded-2xl font-semibold transition"
+            class="mt-6 inline-flex items-center justify-center rounded-full bg-[#d90429] px-6 py-3 text-[11px] font-black uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-[#111]"
           >
-            WhatsApp Us
+            WhatsApp Us →
           </a>
         </div>
       </div>
 
-      <div class="border-t border-white/10 mt-12 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-[#C0C0C0]">
+      <div class="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row md:items-center md:justify-between">
         <p>
-          © {{ new Date().getFullYear() }} Haxon Automotive. All rights reserved.
+          © {{ year }} Haxon Automotive. All rights reserved.
         </p>
 
         <p>
@@ -136,57 +134,32 @@ const isAdmin = computed(() => {
 
   <footer
     v-else
-    class="bg-[#121212] text-white border-t border-white/10"
+    class="border-t border-white/10 bg-[#070707] text-white"
   >
-    <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[#D90429] flex items-center justify-center font-black text-xl">
-          H
-        </div>
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-6 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+      <div>
+        <p class="text-xl font-black tracking-[0.18em]">
+          HAXON
+        </p>
 
-        <div>
-          <p class="font-bold">
-            Haxon Control Panel
-          </p>
-
-          <p class="text-xs text-[#C0C0C0]">
-            Store management dashboard
-          </p>
-        </div>
+        <p class="mt-1 text-xs font-semibold text-white/40">
+          Control Panel
+        </p>
       </div>
 
-      <div class="flex flex-wrap gap-4 text-sm text-[#C0C0C0]">
+      <div class="flex flex-wrap gap-4 text-sm">
         <router-link
-          to="/admin"
-          class="hover:text-[#D90429] transition"
+          v-for="link in adminLinks"
+          :key="link.label"
+          :to="link.to"
+          class="text-white/50 transition hover:text-[#d90429]"
         >
-          Dashboard
-        </router-link>
-
-        <router-link
-          to="/admin/products"
-          class="hover:text-[#D90429] transition"
-        >
-          Products
-        </router-link>
-
-        <router-link
-          to="/admin/orders"
-          class="hover:text-[#D90429] transition"
-        >
-          Orders
-        </router-link>
-
-        <router-link
-          to="/"
-          class="hover:text-[#D90429] transition"
-        >
-          View Store
+          {{ link.label }}
         </router-link>
       </div>
 
-      <p class="text-xs text-[#C0C0C0]">
-        © {{ new Date().getFullYear() }} Haxon Admin
+      <p class="text-xs text-white/35">
+        © {{ year }} Haxon Admin
       </p>
     </div>
   </footer>
