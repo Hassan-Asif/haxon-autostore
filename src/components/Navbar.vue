@@ -8,168 +8,153 @@ const cartStore = useCartStore()
 
 const mobileMenu = ref(false)
 
-const isAdmin = computed(() => {
-  return route.path.startsWith('/admin')
-})
+const isAdmin = computed(() => route.path.startsWith('/admin'))
+
+const storeLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Shop', to: '/products' },
+  { label: 'Collections', to: '/products' },
+  { label: 'Brands', to: '/products' },
+  { label: 'Contact', to: '/contact' },
+]
+
+const adminLinks = [
+  { label: 'Dashboard', to: '/admin' },
+  { label: 'Products', to: '/admin/products' },
+  { label: 'Orders', to: '/admin/orders' },
+  { label: 'View Store', to: '/' },
+]
+
+const links = computed(() => (isAdmin.value ? adminLinks : storeLinks))
 
 const closeMobileMenu = () => {
   mobileMenu.value = false
 }
+
+const isActive = (path) => {
+  if (path === '/') return route.path === '/'
+  return route.path.startsWith(path)
+}
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-[#121212] text-white shadow-xl border-b border-[#C0C0C0]/10">
+  <header class="sticky top-0 z-50 border-b border-black/10 bg-white/90 text-[#121212] backdrop-blur-xl">
     <div
       v-if="!isAdmin"
-      class="bg-[#D90429] text-white"
+      class="border-b border-black/10 bg-[#121212] text-white"
     >
-      <div class="max-w-7xl mx-auto px-5 py-2 flex items-center justify-center text-xs md:text-sm font-medium tracking-wide">
-        🚗 Premium Car Accessories Delivered Across Pakistan
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-2 text-[11px] font-medium sm:px-6 lg:px-8">
+        <p class="tracking-wide text-white/70">
+          Premium car accessories. Delivered across Pakistan.
+        </p>
+
+        <div class="hidden items-center gap-6 md:flex">
+          <router-link
+            to="/contact"
+            class="text-white/55 transition hover:text-white"
+          >
+            Help
+          </router-link>
+
+          <router-link
+            to="/cart"
+            class="text-white/55 transition hover:text-white"
+          >
+            Track Order
+          </router-link>
+        </div>
       </div>
     </div>
 
-    <nav class="bg-[#121212]">
-      <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
+    <nav>
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-6 lg:px-8">
         <router-link
           :to="isAdmin ? '/admin' : '/'"
-          class="group flex items-center gap-3"
+          class="group leading-none"
           @click="closeMobileMenu"
         >
-          <div class="w-12 h-12 rounded-2xl bg-[#D90429] text-white flex items-center justify-center font-black text-2xl shadow-lg shadow-[#D90429]/25 border border-white/10">
-            H
-          </div>
+          <span class="block text-3xl font-black tracking-[0.24em]">
+            HAXON
+          </span>
 
-          <div class="leading-none">
-            <span class="block text-2xl md:text-3xl font-black tracking-tight">
-              Haxon
-            </span>
-
-            <span class="block text-[10px] md:text-xs tracking-[0.28em] uppercase text-[#C0C0C0] group-hover:text-[#D90429] transition mt-1">
-              {{ isAdmin ? 'Control Panel' : 'Automotive' }}
-            </span>
-          </div>
+          <span class="mt-1 block text-[10px] font-bold uppercase tracking-[0.44em] text-[#D90429]">
+            {{ isAdmin ? 'Control Panel' : 'Automotive' }}
+          </span>
         </router-link>
 
-        <div
-          v-if="!isAdmin"
-          class="hidden md:flex items-center gap-2"
-        >
+        <div class="hidden items-center gap-1 lg:flex">
           <router-link
-            to="/"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
+            v-for="link in links"
+            :key="link.label"
+            :to="link.to"
+            class="relative px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#555] transition hover:text-[#D90429]"
+            :class="isActive(link.to) ? 'text-[#121212]' : ''"
           >
-            Home
-          </router-link>
+            {{ link.label }}
 
-          <router-link
-            to="/products"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-          >
-            Shop
-          </router-link>
-
-          <router-link
-            to="/contact"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-          >
-            Contact
+            <span
+              v-if="isActive(link.to)"
+              class="absolute bottom-0 left-4 right-4 h-px bg-[#D90429]"
+            ></span>
           </router-link>
         </div>
 
-        <div
-          v-else
-          class="hidden md:flex items-center gap-2"
-        >
-          <router-link
-            to="/admin"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
+        <div class="hidden items-center gap-3 lg:flex">
+          <button
+            v-if="!isAdmin"
+            type="button"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-xl transition hover:border-[#D90429]/50 hover:text-[#D90429]"
+            aria-label="Search"
           >
-            Dashboard
-          </router-link>
+            ⌕
+          </button>
 
           <router-link
-            to="/admin/products"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-          >
-            Products
-          </router-link>
-
-          <router-link
-            to="/admin/orders"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-          >
-            Orders
-          </router-link>
-
-          <router-link
-            to="/"
-            class="px-4 py-2 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-          >
-            View Store
-          </router-link>
-        </div>
-
-        <div
-          v-if="!isAdmin"
-          class="hidden md:flex items-center gap-3"
-        >
-          <router-link
+            v-if="!isAdmin"
             to="/cart"
-            class="relative bg-[#D90429] hover:bg-red-700 px-5 py-3 rounded-2xl transition font-semibold shadow-lg shadow-[#D90429]/20"
+            class="relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-lg transition hover:border-[#D90429]/50 hover:text-[#D90429]"
+            aria-label="Cart"
           >
-            <span class="mr-2">🛒</span>
-            Cart
+            🛒
 
             <span
               v-if="cartStore.totalItems"
-              class="ml-2 inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full bg-white text-[#D90429] text-xs font-bold"
+              class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#D90429] px-1 text-[10px] font-black text-white"
             >
               {{ cartStore.totalItems }}
             </span>
           </router-link>
-        </div>
 
-        <div
-          v-else
-          class="hidden md:flex items-center gap-3"
-        >
           <router-link
+            v-if="isAdmin"
             to="/admin/products/add"
-            class="bg-[#D90429] hover:bg-red-700 px-5 py-3 rounded-2xl transition font-semibold shadow-lg shadow-[#D90429]/20"
+            class="rounded-2xl bg-[#D90429] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#b80322]"
           >
             + Add Product
           </router-link>
         </div>
 
-        <div class="md:hidden flex items-center gap-4">
+        <div class="flex items-center gap-3 lg:hidden">
           <router-link
             v-if="!isAdmin"
             to="/cart"
-            class="relative w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center"
+            class="relative flex h-11 w-11 items-center justify-center rounded-full border border-black/10"
             @click="closeMobileMenu"
           >
             🛒
 
             <span
               v-if="cartStore.totalItems"
-              class="absolute -top-2 -right-2 bg-[#D90429] text-white text-xs min-w-5 h-5 px-1 rounded-full flex items-center justify-center font-bold"
+              class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#D90429] px-1 text-[10px] font-black text-white"
             >
               {{ cartStore.totalItems }}
             </span>
           </router-link>
 
-          <router-link
-            v-else
-            to="/"
-            class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-sm font-bold"
-            @click="closeMobileMenu"
-          >
-            Store
-          </router-link>
-
           <button
+            type="button"
+            class="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-xl"
             @click="mobileMenu = !mobileMenu"
-            class="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl"
             aria-label="Toggle menu"
           >
             {{ mobileMenu ? '×' : '☰' }}
@@ -179,89 +164,36 @@ const closeMobileMenu = () => {
 
       <div
         v-if="mobileMenu"
-        class="md:hidden bg-[#121212] border-t border-white/10"
+        class="border-t border-black/10 bg-white px-5 py-4 lg:hidden"
       >
-        <div
+        <router-link
+          v-for="link in links"
+          :key="link.label"
+          :to="link.to"
+          class="block rounded-2xl px-4 py-3 text-sm font-bold uppercase tracking-[0.16em] text-[#555] transition hover:bg-black/5 hover:text-[#D90429]"
+          :class="isActive(link.to) ? 'bg-black/5 text-[#121212]' : ''"
+          @click="closeMobileMenu"
+        >
+          {{ link.label }}
+        </router-link>
+
+        <router-link
           v-if="!isAdmin"
-          class="px-5 py-4 space-y-2"
+          to="/cart"
+          class="mt-3 block rounded-2xl bg-[#121212] px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-white"
+          @click="closeMobileMenu"
         >
-          <router-link
-            to="/"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Home
-          </router-link>
+          Cart · {{ cartStore.totalItems }}
+        </router-link>
 
-          <router-link
-            to="/products"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Shop
-          </router-link>
-
-          <router-link
-            to="/contact"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Contact
-          </router-link>
-
-          <router-link
-            to="/cart"
-            class="block px-4 py-3 rounded-xl bg-[#D90429] text-white font-semibold transition"
-            @click="closeMobileMenu"
-          >
-            Cart ({{ cartStore.totalItems }})
-          </router-link>
-        </div>
-
-        <div
+        <router-link
           v-else
-          class="px-5 py-4 space-y-2"
+          to="/admin/products/add"
+          class="mt-3 block rounded-2xl bg-[#D90429] px-4 py-3 text-center text-sm font-bold uppercase tracking-[0.16em] text-white"
+          @click="closeMobileMenu"
         >
-          <router-link
-            to="/admin"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Dashboard
-          </router-link>
-
-          <router-link
-            to="/admin/products"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Products
-          </router-link>
-
-          <router-link
-            to="/admin/orders"
-            class="block px-4 py-3 rounded-xl text-[#C0C0C0] hover:text-white hover:bg-white/5 transition"
-            @click="closeMobileMenu"
-          >
-            Orders
-          </router-link>
-
-          <router-link
-            to="/admin/products/add"
-            class="block px-4 py-3 rounded-xl bg-[#D90429] text-white font-semibold transition"
-            @click="closeMobileMenu"
-          >
-            Add Product
-          </router-link>
-
-          <router-link
-            to="/"
-            class="block px-4 py-3 rounded-xl border border-white/10 text-white transition"
-            @click="closeMobileMenu"
-          >
-            View Store
-          </router-link>
-        </div>
+          Add Product
+        </router-link>
       </div>
     </nav>
   </header>

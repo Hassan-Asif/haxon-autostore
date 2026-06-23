@@ -2,7 +2,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '../stores/productStore'
-import ProductCard from '../components/ProductCard.vue'
+import ProductCard from '../components/ui/ProductCard.vue'
 
 const route = useRoute()
 const productStore = useProductStore()
