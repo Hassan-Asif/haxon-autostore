@@ -17,7 +17,7 @@ import 'vue-sonner/style.css'
       <RouterView />
     </main>
 
-    <Footer />
+    <!-- <Footer /> -->
 
     <!-- Toasts -->
     <Toaster
@@ -29,6 +29,6 @@ import 'vue-sonner/style.css'
     />
 
     <!-- Floating Quick Actions -->
-    <FloatingActions />
+    <!-- <FloatingActions /> -->
   </div>
 </template>
