@@ -448,22 +448,22 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-6 py-8">
+  <div class="admin-shell">
+    <div class="admin-page">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
           <button
             @click="router.push('/admin/products')"
-            class="text-sm text-gray-500 hover:text-red-600 mb-3"
+            class="text-sm text-slate-400 hover:text-red-600 mb-3"
           >
             ← Back to products
           </button>
 
-          <h1 class="text-4xl font-bold text-gray-900">
+          <h1 class="admin-title">
             Edit Product
           </h1>
 
-          <p class="text-gray-500 mt-2">
+          <p class="admin-muted mt-3">
             Update product details, pricing, availability, and image.
           </p>
         </div>
@@ -471,14 +471,14 @@ onMounted(() => {
         <div class="flex gap-3">
           <button
             @click="loadProduct"
-            class="border border-gray-300 hover:bg-gray-100 transition rounded-xl px-5 py-3"
+            class="admin-btn-secondary"
           >
             Reload
           </button>
 
           <button
             @click="router.push('/admin/products')"
-            class="border border-gray-300 hover:bg-gray-100 transition rounded-xl px-5 py-3"
+            class="admin-btn-secondary"
           >
             Cancel
           </button>
@@ -487,7 +487,7 @@ onMounted(() => {
 
       <div
         v-if="pageLoading"
-        class="bg-white rounded-2xl shadow-sm border p-12 text-center text-gray-500"
+        class="admin-card p-12 text-center text-slate-400"
       >
         Loading product...
       </div>
@@ -497,48 +497,48 @@ onMounted(() => {
         class="grid grid-cols-1 xl:grid-cols-3 gap-8"
       >
         <div class="xl:col-span-2 space-y-6">
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-5">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-5">
               General Information
             </h2>
 
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Product Name *
                 </label>
 
                 <input
                   v-model="form.name"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="M8 LED Headlights"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Slug
                 </label>
 
                 <input
                   v-model="form.slug"
-                  class="w-full bg-gray-100 border rounded-xl p-3 text-gray-600"
+                  class="admin-input"
                   placeholder="product-slug"
                 />
 
-                <p class="text-xs text-gray-400 mt-1">
+                <p class="text-xs text-slate-500 mt-1">
                   Used later for clean product URLs.
                 </p>
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Category *
                 </label>
 
                 <select
                   v-model="form.category"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                 >
                   <option value="">
                     Select Category
@@ -555,72 +555,72 @@ onMounted(() => {
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Description *
                 </label>
 
                 <textarea
                   v-model="form.description"
                   rows="6"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="Write product details, fitment, quality, features, and notes..."
                 />
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-5">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-5">
               Compatibility
             </h2>
 
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Car Brand *
                 </label>
 
                 <input
                   v-model="form.carBrand"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="Toyota, Honda, Suzuki..."
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Car Model *
                 </label>
 
                 <input
                   v-model="form.carModel"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="Corolla, Civic, Alto..."
                 />
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-5">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-5">
               Pricing
             </h2>
 
             <div class="space-y-5">
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Regular Price *
                 </label>
 
                 <input
                   v-model="form.price"
                   type="number"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="6500"
                 />
               </div>
 
-              <div class="border rounded-xl p-4 bg-gray-50">
+              <div class="border border-white/10 rounded-xl p-4 bg-white/5">
                 <label class="flex items-center gap-3">
                   <input
                     v-model="form.saleEnabled"
@@ -633,7 +633,7 @@ onMounted(() => {
                   </span>
                 </label>
 
-                <p class="text-sm text-gray-500 mt-2">
+                <p class="text-sm admin-muted mt-3">
                   Add a percentage discount or fixed sale price.
                 </p>
               </div>
@@ -643,13 +643,13 @@ onMounted(() => {
                 class="grid md:grid-cols-2 gap-4"
               >
                 <div>
-                  <label class="block text-sm font-medium mb-2">
+                  <label class="admin-label">
                     Sale Type
                   </label>
 
                   <select
                     v-model="form.saleType"
-                    class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                    class="admin-input"
                   >
                     <option
                       v-for="item in saleTypes"
@@ -662,14 +662,14 @@ onMounted(() => {
                 </div>
 
                 <div>
-                  <label class="block text-sm font-medium mb-2">
+                  <label class="admin-label">
                     Sale Value
                   </label>
 
                   <input
                     v-model="form.saleValue"
                     type="number"
-                    class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                    class="admin-input"
                     :placeholder="form.saleType === 'percentage' ? 'Example: 10' : 'Example: 5500'"
                   />
                 </div>
@@ -677,10 +677,10 @@ onMounted(() => {
 
               <div
                 v-if="form.saleEnabled"
-                class="rounded-xl bg-gray-100 p-4 space-y-2"
+                class="rounded-xl bg-white/10 p-4 space-y-2"
               >
                 <div class="flex justify-between">
-                  <span class="text-gray-600">
+                  <span class="text-slate-300">
                     Original Price
                   </span>
 
@@ -712,20 +712,20 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-5">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-5">
               Availability
             </h2>
 
             <div class="grid md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Availability
                 </label>
 
                 <select
                   v-model="form.availability"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                 >
                   <option
                     v-for="item in availabilityOptions"
@@ -738,26 +738,26 @@ onMounted(() => {
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Estimated Delivery
                 </label>
 
                 <input
                   v-model="form.estimatedDelivery"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="2-3 Days"
                 />
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-5">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-5">
               Visibility
             </h2>
 
             <div class="grid md:grid-cols-2 gap-4">
-              <label class="border rounded-xl p-4 flex items-start gap-3 bg-gray-50">
+              <label class="border border-white/10 rounded-xl p-4 flex items-start gap-3 bg-white/5">
                 <input
                   v-model="form.featured"
                   type="checkbox"
@@ -769,13 +769,13 @@ onMounted(() => {
                     Featured Product
                   </p>
 
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-slate-400">
                     Show this product in highlighted sections.
                   </p>
                 </div>
               </label>
 
-              <label class="border rounded-xl p-4 flex items-start gap-3 bg-gray-50">
+              <label class="border border-white/10 rounded-xl p-4 flex items-start gap-3 bg-white/5">
                 <input
                   v-model="form.active"
                   type="checkbox"
@@ -787,7 +787,7 @@ onMounted(() => {
                     Active Product
                   </p>
 
-                  <p class="text-sm text-gray-500">
+                  <p class="text-sm text-slate-400">
                     Visible on public store when active.
                   </p>
                 </div>
@@ -797,16 +797,16 @@ onMounted(() => {
         </div>
 
         <div class="space-y-6">
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title">
               Product Image
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1 mb-5">
+            <p class="text-sm text-slate-400 mt-1 mb-5">
               Upload JPG, PNG, or WEBP under 5MB.
             </p>
 
-            <div class="border rounded-2xl p-4 bg-gray-50 mb-4">
+            <div class="border rounded-2xl p-4 bg-white/5 mb-4">
               <p class="text-sm font-medium mb-2">
                 Current / New Image
               </p>
@@ -819,7 +819,7 @@ onMounted(() => {
 
               <div
                 v-else
-                class="w-full h-72 rounded-xl border bg-white flex items-center justify-center text-gray-400"
+                class="w-full h-72 rounded-xl border bg-white flex items-center justify-center text-slate-500"
               >
                 No image selected
               </div>
@@ -829,18 +829,18 @@ onMounted(() => {
               type="file"
               accept="image/jpeg,image/png,image/webp"
               @change="handleImage"
-              class="w-full border rounded-xl p-3"
+              class="admin-input"
             />
 
             <button
               v-if="form.imagePreview"
               @click="clearSelectedImage"
-              class="w-full mt-3 border border-gray-300 text-gray-700 py-3 rounded-xl hover:bg-gray-50 transition"
+              class="admin-btn-secondary w-full mt-3"
             >
               Remove Selected Image
             </button>
 
-            <div class="mt-4 text-xs text-gray-500 break-all">
+            <div class="mt-4 text-xs text-slate-400 break-all">
               <p class="font-medium mb-1">
                 Storage Path
               </p>
@@ -851,18 +851,18 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          <div class="admin-card overflow-hidden">
             <div class="p-5 border-b">
-              <h2 class="text-xl font-semibold">
+              <h2 class="admin-section-title">
                 Live Preview
               </h2>
 
-              <p class="text-sm text-gray-500 mt-1">
+              <p class="text-sm text-slate-400 mt-1">
                 Approximate storefront product card.
               </p>
             </div>
 
-            <div class="aspect-square bg-gray-100 flex items-center justify-center">
+            <div class="aspect-square bg-white/10 flex items-center justify-center">
               <img
                 v-if="form.imagePreview || form.image"
                 :src="form.imagePreview || form.image"
@@ -871,7 +871,7 @@ onMounted(() => {
 
               <span
                 v-else
-                class="text-gray-400"
+                class="text-slate-500"
               >
                 Image Preview
               </span>
@@ -888,29 +888,29 @@ onMounted(() => {
 
                 <span
                   v-if="!form.active"
-                  class="inline-block bg-gray-200 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full"
+                  class="inline-block bg-gray-200 text-slate-300 text-xs font-semibold px-3 py-1 rounded-full"
                 >
                   Inactive
                 </span>
               </div>
 
-              <h3 class="font-bold text-xl">
+              <h3 class="font-black text-xl text-white">
                 {{ form.name || 'Product Name' }}
               </h3>
 
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-slate-400">
                 {{ form.category || 'Category' }}
               </p>
 
               <div class="space-y-1">
                 <div
                   v-if="form.saleEnabled && calculatedSaving > 0"
-                  class="text-sm text-gray-400 line-through"
+                  class="text-sm text-slate-500 line-through"
                 >
                   PKR {{ Number(form.price || 0).toLocaleString() }}
                 </div>
 
-                <div class="text-2xl font-bold text-red-600">
+                <div class="text-2xl font-black text-red-300">
                   PKR {{ calculatedSalePrice.toLocaleString() }}
                 </div>
 
@@ -922,7 +922,7 @@ onMounted(() => {
                 </div>
               </div>
 
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-slate-400">
                 {{ form.carBrand || 'Brand' }}
                 {{ form.carModel || 'Model' }}
               </p>
@@ -940,15 +940,15 @@ onMounted(() => {
                   {{ form.availability }}
                 </span>
 
-                <span class="inline-block bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+                <span class="inline-block bg-white/10 text-slate-300 text-xs px-3 py-1 rounded-full">
                   {{ form.estimatedDelivery || 'Delivery not set' }}
                 </span>
               </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
-            <h2 class="text-xl font-semibold mb-4">
+          <div class="admin-card p-6">
+            <h2 class="admin-section-title mb-4">
               Update Product
             </h2>
 
@@ -962,14 +962,14 @@ onMounted(() => {
             <button
               @click="saveProduct"
               :disabled="loading || !isValid"
-              class="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold py-4 rounded-2xl transition"
+              class="admin-btn-primary w-full py-4"
             >
               {{ loading ? 'Saving Changes...' : 'Update Product' }}
             </button>
 
             <button
               @click="router.push('/admin/products')"
-              class="w-full mt-3 border border-gray-300 text-gray-700 py-3 rounded-xl hover:bg-gray-50 transition"
+              class="admin-btn-secondary w-full mt-3"
             >
               Cancel
             </button>

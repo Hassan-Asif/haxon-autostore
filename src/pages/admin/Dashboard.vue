@@ -112,250 +112,69 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-6 md:p-10">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
-      <div>
-        <h1 class="text-4xl font-bold">
-          Dashboard
-        </h1>
-
-        <p class="text-gray-500 mt-2">
-          Overview of Haxon products, orders, and admin activity.
-        </p>
-      </div>
-
-      <div class="flex gap-3">
-        <button
-          @click="loadStats"
-          class="border px-5 py-3 rounded-lg hover:bg-gray-50 transition"
-        >
-          Refresh
-        </button>
-
-        <router-link
-          to="/admin/products/add"
-          class="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg transition"
-        >
-          Add Product
-        </router-link>
-      </div>
-    </div>
-
-    <div
-      v-if="loading"
-      class="bg-white rounded-2xl shadow p-10 text-center text-gray-500"
-    >
-      Loading dashboard...
-    </div>
-
-    <div
-      v-else-if="error"
-      class="bg-red-50 border border-red-200 text-red-700 rounded-2xl p-6"
-    >
-      {{ error }}
-    </div>
-
-    <div v-else>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Total Products
-          </p>
-
-          <h2 class="text-4xl font-bold mt-3">
-            {{ stats.totalProducts }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            {{ stats.activeProducts }} active
-          </p>
+  <div class="admin-shell">
+    <div class="admin-page">
+      <div class="flex flex-col gap-5 mb-8 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="admin-eyebrow">Haxon control room</p>
+          <h1 class="admin-title">Welcome back, Admin</h1>
+          <p class="admin-muted mt-3 max-w-2xl">Monitor product readiness, order pressure, low-stock risk, and customer activity from one clean dashboard.</p>
         </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Total Orders
-          </p>
-
-          <h2 class="text-4xl font-bold mt-3">
-            {{ stats.totalOrders }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            All customer orders
-          </p>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Pending Confirmation
-          </p>
-
-          <h2 class="text-4xl font-bold mt-3 text-yellow-500">
-            {{ stats.pendingOrders }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            Needs admin action
-          </p>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Delivered Orders
-          </p>
-
-          <h2 class="text-4xl font-bold mt-3 text-green-600">
-            {{ stats.deliveredOrders }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            Completed sales
-          </p>
+        <div class="flex flex-wrap gap-3">
+          <button @click="loadStats" class="admin-btn-secondary">Refresh</button>
+          <router-link to="/admin/products/add" class="admin-btn-primary">Add Product</router-link>
         </div>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6 mb-10">
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Estimated Revenue
-          </p>
+      <div v-if="loading" class="admin-card p-10 text-center admin-muted">Loading dashboard...</div>
+      <div v-else-if="error" class="rounded-3xl border border-red-400/30 bg-red-500/10 p-6 text-red-100">{{ error }}</div>
 
-          <h2 class="text-3xl font-bold mt-3">
-            {{ formatPrice(stats.estimatedRevenue) }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            Based on delivered orders
-          </p>
+      <div v-else class="space-y-8">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div v-for="card in [
+            ['Total Products', stats.totalProducts, `${stats.activeProducts} active`],
+            ['Total Orders', stats.totalOrders, 'All customer orders'],
+            ['Pending Orders', stats.pendingOrders, 'Needs admin action'],
+            ['Revenue Estimate', formatPrice(stats.estimatedRevenue), 'Delivered orders only'],
+            ['Low Stock', stats.outOfStockProducts, 'Review availability']
+          ]" :key="card[0]" class="admin-card p-5">
+            <p class="text-sm font-bold text-slate-400">{{ card[0] }}</p>
+            <h2 class="mt-3 text-3xl font-black text-white">{{ card[1] }}</h2>
+            <p class="mt-2 text-sm text-slate-500">{{ card[2] }}</p>
+          </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Featured Products
-          </p>
-
-          <h2 class="text-3xl font-bold mt-3">
-            {{ stats.featuredProducts }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            Shown as highlighted items
-          </p>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow border border-gray-100">
-          <p class="text-gray-500">
-            Out of Stock
-          </p>
-
-          <h2 class="text-3xl font-bold mt-3 text-red-600">
-            {{ stats.outOfStockProducts }}
-          </h2>
-
-          <p class="text-sm text-gray-400 mt-2">
-            Should be reviewed
-          </p>
-        </div>
-      </div>
-
-      <div class="grid lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <div class="flex items-center justify-between mb-5">
-            <div>
-              <h2 class="text-xl font-bold">
-                Recent Orders
-              </h2>
-
-              <p class="text-sm text-gray-500">
-                Latest customer activity
-              </p>
+        <div class="grid gap-6 lg:grid-cols-[1fr_22rem]">
+          <section class="admin-card p-6">
+            <div class="mb-5 flex items-center justify-between gap-4">
+              <div><h2 class="admin-section-title">Recent orders</h2><p class="admin-muted text-sm">Latest customer activity</p></div>
+              <router-link to="/admin/orders" class="text-sm font-bold text-red-300 hover:text-red-200">View all</router-link>
             </div>
-
-            <router-link
-              to="/admin/orders"
-              class="text-red-600 font-medium hover:underline"
-            >
-              View all
-            </router-link>
-          </div>
-
-          <div
-            v-if="recentOrders.length === 0"
-            class="text-gray-500 text-center py-10"
-          >
-            No orders yet.
-          </div>
-
-          <div
-            v-else
-            class="space-y-3"
-          >
-            <div
-              v-for="order in recentOrders"
-              :key="order.id"
-              class="border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-            >
-              <div>
-                <p class="font-semibold">
-                  {{ order.customerName || 'Unnamed Customer' }}
-                </p>
-
-                <p class="text-sm text-gray-500">
-                  {{ order.phone || order.email || 'No contact saved' }}
-                </p>
-              </div>
-
-              <div class="text-left md:text-right">
-                <p class="font-semibold">
-                  {{ formatPrice(order.totalAmount || order.total) }}
-                </p>
-
-                <p
-                  class="text-sm"
-                  :class="{
-                    'text-yellow-600': order.status === 'Pending Confirmation',
-                    'text-green-600': order.status === 'Delivered',
-                    'text-gray-500': order.status !== 'Pending Confirmation' && order.status !== 'Delivered'
-                  }"
-                >
-                  {{ order.status || 'No status' }}
-                </p>
-              </div>
+            <div v-if="recentOrders.length === 0" class="admin-card-soft p-10 text-center admin-muted">No orders yet.</div>
+            <div v-else class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>Customer</th><th>Status</th><th class="text-right">Total</th></tr></thead>
+                <tbody>
+                  <tr v-for="order in recentOrders" :key="order.id">
+                    <td><p class="font-bold text-white">{{ order.customerName || order.customer?.name || 'Unnamed Customer' }}</p><p class="text-sm text-slate-400">{{ order.phone || order.customer?.phone || order.email || 'No contact saved' }}</p></td>
+                    <td><span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm text-slate-200">{{ order.status || order.orderStatus || 'No status' }}</span></td>
+                    <td class="text-right font-black text-white">{{ formatPrice(order.totalAmount || order.total) }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <div class="bg-white rounded-2xl shadow border border-gray-100 p-6">
-          <h2 class="text-xl font-bold mb-5">
-            Quick Actions
-          </h2>
-
-          <div class="space-y-3">
-            <router-link
-              to="/admin/products"
-              class="block w-full bg-green-600 hover:bg-green-700 text-white text-center px-6 py-3 rounded-lg transition"
-            >
-              Manage Products
-            </router-link>
-
-            <router-link
-              to="/admin/orders"
-              class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center px-6 py-3 rounded-lg transition"
-            >
-              View Orders
-            </router-link>
-
-            <router-link
-              to="/admin/products/add"
-              class="block w-full border border-gray-300 hover:bg-gray-50 text-center px-6 py-3 rounded-lg transition"
-            >
-              Add New Product
-            </router-link>
-          </div>
-
-          <div class="mt-6 p-4 bg-gray-50 rounded-xl text-sm text-gray-600">
-            Keep product availability honest. “Available” without stock is how customers become angry final bosses.
-          </div>
+          <aside class="admin-card p-6">
+            <h2 class="admin-section-title">Quick actions</h2>
+            <div class="mt-5 space-y-3">
+              <router-link to="/admin/products/add" class="admin-btn-primary w-full">Add Product</router-link>
+              <router-link to="/admin/orders" class="admin-btn-secondary w-full">View Orders</router-link>
+              <router-link to="/admin/products" class="admin-btn-secondary w-full">Manage Products</router-link>
+              <router-link to="/" class="admin-btn-secondary w-full">View Store</router-link>
+            </div>
+            <p class="mt-6 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100">Keep availability honest and confirm fitment before promising dispatch.</p>
+          </aside>
         </div>
       </div>
     </div>

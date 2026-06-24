@@ -321,25 +321,25 @@ const saveProduct = async () => {
 }
 </script>
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-6 py-8">
+  <div class="admin-shell">
+    <div class="admin-page">
 
       <!-- Header -->
 
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 class="text-4xl font-bold text-gray-900">
+          <h1 class="admin-title">
             Add Product
           </h1>
 
-          <p class="text-gray-500 mt-2">
+          <p class="admin-muted mt-3">
             Create a new product for the Haxon Store.
           </p>
         </div>
 
         <button
           @click="resetForm"
-          class="border border-gray-300 hover:bg-gray-100 transition rounded-xl px-5 py-3"
+          class="admin-btn-secondary"
         >
           Reset Form
         </button>
@@ -353,47 +353,47 @@ const saveProduct = async () => {
 
           <!-- General -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               General Information
             </h2>
 
             <div class="space-y-4">
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Product Name *
                 </label>
 
                 <input
                   v-model="form.name"
-                  class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                  class="admin-input"
                   placeholder="M8 LED Headlights"
                 >
               </div>
 
               <div>
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Slug
                 </label>
 
                 <input
                   v-model="form.slug"
                   readonly
-                  class="w-full bg-gray-100 border rounded-xl p-3"
+                  class="admin-input"
                 >
               </div>
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Category *
                 </label>
 
                 <select
                   v-model="form.category"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                 >
 
                   <option value="">
@@ -413,14 +413,14 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Description *
                 </label>
 
                 <textarea
                   v-model="form.description"
                   rows="6"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                   placeholder="Product description..."
                 />
 
@@ -432,9 +432,9 @@ const saveProduct = async () => {
 
           <!-- Compatibility -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               Compatibility
             </h2>
 
@@ -442,13 +442,13 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Car Brand *
                 </label>
 
                 <input
                   v-model="form.carBrand"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                   placeholder="Toyota"
                 >
 
@@ -456,13 +456,13 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Car Model *
                 </label>
 
                 <input
                   v-model="form.carModel"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                   placeholder="Corolla"
                 >
 
@@ -474,9 +474,9 @@ const saveProduct = async () => {
 
           <!-- Pricing -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               Pricing
             </h2>
 
@@ -484,14 +484,14 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Regular Price *
                 </label>
 
                 <input
                   v-model="form.price"
                   type="number"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                   placeholder="6500"
                 >
 
@@ -515,13 +515,13 @@ const saveProduct = async () => {
 
                 <div>
 
-                  <label class="block text-sm font-medium mb-2">
+                  <label class="admin-label">
                     Sale Type
                   </label>
 
                   <select
                     v-model="form.saleType"
-                    class="w-full border rounded-xl p-3"
+                    class="admin-input"
                   >
 
                     <option
@@ -538,14 +538,14 @@ const saveProduct = async () => {
 
                 <div>
 
-                  <label class="block text-sm font-medium mb-2">
+                  <label class="admin-label">
                     Sale Value
                   </label>
 
                   <input
                     v-model="form.saleValue"
                     type="number"
-                    class="w-full border rounded-xl p-3"
+                    class="admin-input"
                   >
 
                 </div>
@@ -554,7 +554,7 @@ const saveProduct = async () => {
 
               <div
                 v-if="form.saleEnabled"
-                class="rounded-xl bg-gray-100 p-4"
+                class="rounded-xl bg-white/10 p-4"
               >
 
                 <div class="flex justify-between">
@@ -601,9 +601,9 @@ const saveProduct = async () => {
 
           <!-- Availability -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               Availability
             </h2>
 
@@ -611,13 +611,13 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Availability
                 </label>
 
                 <select
                   v-model="form.availability"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                 >
 
                   <option
@@ -633,13 +633,13 @@ const saveProduct = async () => {
 
               <div>
 
-                <label class="block text-sm font-medium mb-2">
+                <label class="admin-label">
                   Estimated Delivery
                 </label>
 
                 <input
                   v-model="form.estimatedDelivery"
-                  class="w-full border rounded-xl p-3"
+                  class="admin-input"
                 >
 
               </div>
@@ -650,9 +650,9 @@ const saveProduct = async () => {
 
           <!-- Visibility -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               Visibility
             </h2>
 
@@ -692,9 +692,9 @@ const saveProduct = async () => {
 
           <!-- Upload -->
 
-          <div class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="admin-card p-6">
 
-            <h2 class="text-xl font-semibold mb-5">
+            <h2 class="admin-section-title mb-5">
               Product Image
             </h2>
 
@@ -702,7 +702,7 @@ const saveProduct = async () => {
               type="file"
               accept="image/jpeg,image/png,image/webp"
               @change="handleImage"
-              class="w-full border rounded-xl p-3"
+              class="admin-input"
             >
 
             <img
@@ -715,10 +715,10 @@ const saveProduct = async () => {
 
           <!-- Live Preview -->
 
-          <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          <div class="admin-card overflow-hidden">
 
             <div
-              class="aspect-square bg-gray-100 flex items-center justify-center"
+              class="aspect-square bg-white/10 flex items-center justify-center"
             >
 
               <img
@@ -729,7 +729,7 @@ const saveProduct = async () => {
 
               <span
                 v-else
-                class="text-gray-400"
+                class="text-slate-500"
               >
                 Image Preview
               </span>
@@ -745,7 +745,7 @@ const saveProduct = async () => {
                 Featured
               </div>
 
-              <h3 class="font-bold text-xl">
+              <h3 class="font-black text-xl text-white">
 
                 {{ form.name || "Product Name" }}
 
@@ -755,14 +755,14 @@ const saveProduct = async () => {
 
                 <div
                   v-if="form.saleEnabled"
-                  class="text-sm text-gray-400 line-through"
+                  class="text-sm text-slate-500 line-through"
                 >
 
                   PKR {{ Number(form.price || 0).toLocaleString() }}
 
                 </div>
 
-                <div class="text-2xl font-bold text-red-600">
+                <div class="text-2xl font-black text-red-300">
 
                   PKR {{ calculatedSalePrice.toLocaleString() }}
 
@@ -770,7 +770,7 @@ const saveProduct = async () => {
 
               </div>
 
-              <p class="text-sm text-gray-500">
+              <p class="text-sm text-slate-400">
 
                 {{ form.carBrand || "Brand" }}
                 {{ form.carModel || "Model" }}
@@ -794,7 +794,7 @@ const saveProduct = async () => {
           <button
             @click="saveProduct"
             :disabled="loading || !isValid"
-            class="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold py-4 rounded-2xl transition"
+            class="admin-btn-primary w-full py-4"
           >
 
             {{ loading ? "Saving Product..." : "Save Product" }}
