@@ -1,54 +1,84 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useContentStore } from '../../stores/contentStore'
+import fallbackHero from '../../assets/hero.png'
+
 const content = useContentStore()
 const active = ref(0)
 let timer
-const slides = computed(() => content.heroSlides?.length ? content.heroSlides : [])
+
+const slides = computed(() => (content.heroSlides?.length ? content.heroSlides : []).filter((slide) => slide.active !== false))
 const slide = computed(() => slides.value[active.value] || slides.value[0])
-const specs = computed(() => slide.value ? [
-  ['Ready Dispatch', slide.value.statOneValue || 'Stocked picks'],
-  ['Fitment Checked', slide.value.statTwoValue || 'Before dispatch'],
-  ['Premium Imports', slide.value.statThreeValue || 'On request'],
-  ['Custom Sourcing', 'Pakistan wide'],
-] : [])
-const next = () => { active.value = (active.value + 1) % Math.max(slides.value.length, 1) }
-const prev = () => { active.value = (active.value - 1 + Math.max(slides.value.length, 1)) % Math.max(slides.value.length, 1) }
-onMounted(async () => { await content.loadStorefrontContent(); timer = setInterval(next, 6800) })
+const slideCount = computed(() => Math.max(slides.value.length, 1))
+const heroImage = computed(() => slide.value?.image || fallbackHero)
+const imagePosition = computed(() => slide.value?.imagePosition || 'center center')
+const specs = computed(() => {
+  const current = slide.value || {}
+  return [
+    [current.statOneLabel || 'Ready Dispatch', current.statOneValue || 'Stocked picks'],
+    [current.statTwoLabel || 'Fitment Checked', current.statTwoValue || 'Before dispatch'],
+    [current.statThreeLabel || 'Premium Imports', current.statThreeValue || 'Curated sourcing'],
+  ]
+})
+
+const next = () => { active.value = (active.value + 1) % slideCount.value }
+const prev = () => { active.value = (active.value - 1 + slideCount.value) % slideCount.value }
+const goTo = (index) => { active.value = index }
+
+watch(slides, (items) => {
+  if (active.value >= items.length) active.value = 0
+})
+
+onMounted(async () => {
+  await content.loadStorefrontContent()
+  if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) timer = setInterval(next, 7200)
+})
 onUnmounted(() => clearInterval(timer))
 </script>
+
 <template>
-  <section class="relative min-h-[94vh] overflow-hidden px-4 pt-28 text-haxon-main sm:px-6 lg:px-8">
-    <div class="absolute inset-0 spotlight-gradient"></div>
-    <div class="automotive-frame relative mx-auto flex min-h-[calc(94vh-8rem)] max-w-7xl flex-col justify-between p-5 sm:p-8 lg:p-10">
-      <transition name="hero-fade" mode="out-in">
-        <div v-if="slide" :key="slide.title" class="split-hero relative flex-1 py-10 lg:py-16">
-          <div class="oversized-word left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2">{{ slide.backgroundWord || 'HAXON' }}</div>
-          <div class="relative z-10 max-w-2xl reveal-up">
-            <p class="premium-eyebrow">{{ slide.eyebrow || 'Haxon Autostore Pakistan' }}</p>
-            <h1 class="mt-5 text-[clamp(3.3rem,8.2vw,8.8rem)] font-black leading-[.82] tracking-[-.085em]">{{ slide.title }}</h1>
-            <p class="mt-7 max-w-xl text-base leading-8 text-haxon-muted md:text-xl">{{ slide.subtitle }}</p>
-            <div class="mt-9 flex flex-wrap gap-3">
-              <router-link :to="slide.primaryCtaLink || '/products'" class="premium-btn premium-btn-light">{{ slide.primaryCtaLabel || 'Shop collection' }}</router-link>
-              <router-link :to="slide.secondaryCtaLink || '/contact'" class="premium-btn premium-btn-ghost">{{ slide.secondaryCtaLabel || 'Fitment help' }}</router-link>
-            </div>
+  <section class="hero-fullscreen relative isolate min-h-screen overflow-hidden text-white" aria-label="Haxon cinematic opening">
+    <transition name="hero-image-fade" mode="out-in">
+      <img
+        :key="heroImage + active"
+        :src="heroImage"
+        :alt="slide?.imageAlt || slide?.title || 'Haxon automotive hero image'"
+        class="hero-bg absolute inset-0 -z-20 h-full w-full object-cover"
+        :style="{ objectPosition: imagePosition }"
+        @error="$event.target.src = fallbackHero"
+      />
+    </transition>
+    <div class="hero-overlay absolute inset-0 -z-10"></div>
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(0,0,0,.58),transparent_52%,rgba(0,0,0,.28))]"></div>
+
+    <transition name="hero-copy" mode="out-in">
+      <div :key="slide?.id || slide?.title || active" class="hero-content premium-container flex min-h-screen flex-col justify-center pb-28 pt-36 md:pb-24">
+        <div class="max-w-5xl">
+          <p class="premium-eyebrow text-white/62">{{ slide?.eyebrow || 'HAXON AUTOSTORE' }}</p>
+          <h1 class="editorial-heading mt-5 max-w-5xl text-[clamp(3.6rem,9vw,9.5rem)] font-black leading-[.84] tracking-[-.085em]">
+            {{ slide?.title || 'Cinematic upgrades for serious cars.' }}
+          </h1>
+          <div v-if="slide?.backgroundWord" class="pointer-events-none absolute left-4 top-[22%] -z-0 hidden text-[18vw] font-black leading-none tracking-[-.12em] text-white/[.045] md:block">
+            {{ slide.backgroundWord }}
           </div>
-          <div class="image-stage relative z-10 min-h-[22rem] lg:min-h-[32rem]">
-            <img v-if="slide.image" :src="slide.image" :alt="slide.imageAlt || slide.title" class="absolute inset-0 h-full w-full object-contain p-5 opacity-95 drop-shadow-[0_35px_55px_rgba(0,0,0,.55)] transition duration-700" @error="$event.target.style.display='none'" />
-            <div class="absolute inset-x-[12%] bottom-[20%] h-10 rounded-full bg-white/10 blur-2xl"></div>
-            <div class="absolute left-6 top-6 rounded-full border border-white/10 bg-black/25 px-4 py-2 text-[10px] font-black uppercase tracking-[.24em] text-white/55">Cinematic fitment stage</div>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <router-link :to="slide?.primaryCtaLink || '/products'" class="hero-cta hero-cta-primary">{{ slide?.primaryCtaLabel || 'Explore Collection' }}</router-link>
+            <router-link :to="slide?.secondaryCtaLink || '/contact'" class="hero-cta hero-cta-secondary">{{ slide?.secondaryCtaLabel || 'Fitment Help' }}</router-link>
           </div>
         </div>
-      </transition>
-      <div class="relative z-10 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
-        <div class="spec-strip rounded-[1.5rem]">
-          <div v-for="spec in specs" :key="spec[0]" class="spec-cell"><p class="spec-cell-label">{{ spec[0] }}</p><p class="spec-cell-value">{{ spec[1] }}</p></div>
-        </div>
-        <div class="flex items-center gap-2 justify-end">
-          <button class="icon-pill" aria-label="Previous slide" @click="prev">←</button><button class="icon-pill" aria-label="Next slide" @click="next">→</button>
-          <button v-for="(_,i) in slides" :key="i" class="h-1.5 rounded-full transition-all" :class="i===active ? 'w-12 bg-white' : 'w-6 bg-white/25'" @click="active=i"></button>
+
+        <div class="absolute bottom-8 left-4 right-4 grid gap-5 md:left-8 md:right-8 lg:grid-cols-[minmax(0,34rem)_1fr_auto] lg:items-end">
+          <p class="max-w-xl text-sm leading-7 text-white/68 md:text-base">{{ slide?.subtitle || 'Premium accessories composed around fitment, sourcing, and a cleaner automotive presence.' }}</p>
+          <div class="flex flex-wrap gap-2">
+            <span v-for="spec in specs" :key="spec[0]" class="rounded-full border border-white/14 bg-white/[.07] px-4 py-2 text-[10px] font-black uppercase tracking-[.22em] text-white/72 backdrop-blur-xl">{{ spec[0] }} · {{ spec[1] }}</span>
+          </div>
+          <div class="flex items-center gap-3 justify-self-start lg:justify-self-end">
+            <button class="tiny-slide-btn" aria-label="Previous slide" @click="prev">←</button>
+            <button v-for="(_, i) in slides" :key="i" class="thin-progress" :class="i === active && 'is-active'" :aria-label="`Go to slide ${i + 1}`" @click="goTo(i)"></button>
+            <button class="tiny-slide-btn" aria-label="Next slide" @click="next">→</button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </section>
 </template>
