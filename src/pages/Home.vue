@@ -23,11 +23,11 @@ const signature = computed(() => featured.value[0] || store.products[0] || null)
     <Revealer as="section" class="premium-section pt-0">
       <div class="premium-container">
         <div class="section-split"><div><p class="premium-eyebrow">Best sellers / arrivals</p><h2 class="section-title">Curated upgrades for the next drive.</h2></div><router-link to="/products" class="premium-btn premium-btn-ghost self-end">View all</router-link></div>
-        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"><ProductCard v-for="product in arrivals" :key="product.id" :product="product" /></div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"><Revealer v-for="(product, i) in arrivals" :key="product.id" :delay="i * 90"><ProductCard :product="product" /></Revealer></div>
       </div>
     </Revealer>
-    <FitmentPanel />
-    <section class="premium-section pt-0">
+    <Revealer><FitmentPanel /></Revealer>
+    <Revealer as="section" class="premium-section pt-0">
       <div class="premium-container">
         <div class="rounded-[2.5rem] border border-white/10 bg-white/[.035] p-7 md:p-10">
           <div class="section-split"><div><p class="premium-eyebrow">Brands</p><h2 class="section-title">Curated by marque.</h2></div><p class="section-copy">Toyota, Honda, BMW, Mercedes-Benz, Audi, and universal selections arranged with premium editorial spacing.</p></div>
@@ -35,6 +35,6 @@ const signature = computed(() => featured.value[0] || store.products[0] || null)
         </div>
         <div class="mt-5 grid gap-3 md:grid-cols-5"><div v-for="item in content.trustItems" :key="item.id || item.title" class="rounded-2xl border border-white/10 bg-haxon-panel p-5 text-sm font-black uppercase tracking-[.18em] text-white/70">{{ item.title }}</div></div>
       </div>
-    </section>
+    </Revealer>
   </div>
 </template>

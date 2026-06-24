@@ -1,12 +1,17 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { toast } from 'vue-sonner'
 import { useCartStore } from '../stores/cartStore'
 import { useAuthStore } from '../stores/authStore'
 
-const route = useRoute(); const router = useRouter(); const cartStore = useCartStore(); const auth = useAuthStore(); const mobileMenu = ref(false)
+const route = useRoute(); const router = useRouter(); const cartStore = useCartStore(); const auth = useAuthStore(); const mobileMenu = ref(false); const scrolled = ref(false)
 const isAdmin = computed(() => route.path.startsWith('/admin'))
+const isHome = computed(() => route.path === '/')
+const navScrolled = computed(() => !isHome.value || isAdmin.value || scrolled.value)
+const handleScroll = () => { scrolled.value = window.scrollY > Math.max(window.innerHeight * 0.72, 520) }
+onMounted(() => { handleScroll(); window.addEventListener('scroll', handleScroll, { passive: true }) })
+onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 const storeLinks = [ { label: 'Home', to: '/' }, { label: 'Shop', to: '/products' }, { label: 'Track', to: '/track-order' }, { label: 'Brands', to: '/brands' }, { label: 'Contact', to: '/contact' }]
 const allAdminLinks = [ { label: 'Dashboard', to: '/admin' }, { label: 'Products', to: '/admin/products', permission: 'manage_products' }, { label: 'Orders', to: '/admin/orders', permission: 'manage_orders' }, { label: 'Content', to: '/admin/content', permission: 'manage_content' }, { label: 'View Store', to: '/' }]
 const adminLinks = computed(() => allAdminLinks.filter((link) => !link.permission || auth.hasPermission(link.permission)))
@@ -17,7 +22,7 @@ const logout = async () => { await auth.logout(); toast.success('Admin signed ou
 </script>
 <template>
   <header class="fixed left-0 right-0 top-0 z-50 px-3 pt-3 text-white sm:px-5 sm:pt-5">
-    <nav class="mx-auto max-w-7xl glass-nav rounded-[1.6rem]">
+    <nav class="mx-auto max-w-7xl rounded-[1.6rem] transition-all duration-500" :class="navScrolled ? 'glass-nav-scrolled' : 'glass-nav-top'">
       <div class="flex items-center justify-between px-4 py-3 sm:px-5">
         <router-link :to="isAdmin ? '/admin' : '/'" class="leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400" @click="closeMobileMenu"><span class="block text-2xl font-black tracking-[0.24em] md:text-3xl">HAXON</span><span class="mt-1 block text-[9px] font-black uppercase tracking-[0.42em] text-[#E50914]">{{ isAdmin ? 'Control Panel' : 'Autostore' }}</span></router-link>
         <div class="hidden items-center rounded-full border border-white/10 bg-white/[.045] p-1 lg:flex">
