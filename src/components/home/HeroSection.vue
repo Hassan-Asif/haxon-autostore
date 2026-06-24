@@ -12,7 +12,7 @@ const slides = [
     title: 'Details that complete the car.',
     subtitle:
       'Lighting, interiors, multimedia, tools and essentials — curated for drivers who care about fit, finish and feel.',
-    image: '/images/toyota-dark-hero.png',
+    image: 'src/assets/testing_2.png',
     tag: 'Curated Parts',
   },
   {
@@ -21,7 +21,7 @@ const slides = [
     title: 'Find the right upgrade faster.',
     subtitle:
       'Choose by vehicle, category or purpose. Cleaner browsing, clearer choices, better parts for your car.',
-    image: '/images/toyota-light-hero.png',
+    image: 'src/assets/testing_2.png',
     tag: 'Verified Fit',
   },
   {
@@ -30,7 +30,7 @@ const slides = [
     title: 'No noise. Just good parts.',
     subtitle:
       'Clean pricing, confirmed availability and products selected with actual use in mind.',
-    image: '/images/toyota-black-hero.png',
+    image: 'src/assets/testing_2.png',
     tag: 'Ready to Dispatch',
   },
 ]
