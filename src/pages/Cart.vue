@@ -36,19 +36,19 @@ const deliveryEstimate = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#121212] text-white">
-    <section class="relative bg-[#17191B] border-b border-white/10 overflow-hidden">
+  <div class="storefront-page min-h-screen pt-24 text-white">
+    <section class="relative bg-transparent border-b border-white/10 overflow-hidden">
       <div class="absolute inset-0 bg-[linear-gradient(135deg,#101112_0%,#1B1E21_45%,#252A2F_55%,#111213_100%)]"></div>
 
       <div class="relative max-w-7xl mx-auto px-6 py-12">
         <div class="flex items-center gap-4 mb-4">
-          <span class="h-px w-10 bg-[#D90429]"></span>
+          <span class="h-px w-10 bg-[#E50914]"></span>
 
           <p class="uppercase tracking-[0.34em] text-[#C0C0C0] text-[11px] font-semibold">
             Haxon Checkout
           </p>
 
-          <span class="h-px w-10 bg-[#D90429]"></span>
+          <span class="h-px w-10 bg-[#E50914]"></span>
         </div>
 
         <h1 class="text-4xl md:text-6xl font-black tracking-tight">
@@ -73,10 +73,10 @@ const deliveryEstimate = computed(() => {
             class="bg-[#181A1D] border border-white/10 rounded-3xl p-4 md:p-5 flex flex-col md:flex-row gap-5 hover:border-[#D90429]/40 transition"
           >
             <img
-              :src="item.image || '/images/no-image.jpg'"
+              :src="item.image || '/image/products/no-image.jpeg'"
               :alt="item.name"
               class="w-full md:w-32 h-44 md:h-32 object-cover rounded-2xl border border-white/10 bg-[#121212]"
-              @error="$event.target.src = '/images/no-image.jpg'"
+              @error="$event.target.src = '/image/products/no-image.jpeg'"
             />
 
             <div class="flex-1">
@@ -104,7 +104,7 @@ const deliveryEstimate = computed(() => {
                     {{ formatPrice(item.price) }}
                   </p>
 
-                  <p class="text-2xl font-black text-[#D90429]">
+                  <p class="text-2xl font-black text-[#E50914]">
                     {{ formatPrice(getItemPrice(item)) }}
                   </p>
                 </div>
@@ -114,7 +114,7 @@ const deliveryEstimate = computed(() => {
                 <div class="flex items-center gap-3">
                   <button
                     @click="cartStore.decreaseQuantity(item.id)"
-                    class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-[#D90429] transition font-bold"
+                    class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-[#E50914] transition font-bold"
                   >
                     -
                   </button>
@@ -125,7 +125,7 @@ const deliveryEstimate = computed(() => {
 
                   <button
                     @click="cartStore.increaseQuantity(item.id)"
-                    class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-[#D90429] transition font-bold"
+                    class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-[#E50914] transition font-bold"
                   >
                     +
                   </button>
@@ -138,7 +138,7 @@ const deliveryEstimate = computed(() => {
 
                   <button
                     @click="cartStore.removeFromCart(item.id)"
-                    class="text-[#C0C0C0] hover:text-[#D90429] transition font-semibold"
+                    class="text-[#C0C0C0] hover:text-[#E50914] transition font-semibold"
                   >
                     Remove
                   </button>
@@ -197,14 +197,14 @@ const deliveryEstimate = computed(() => {
               Estimated Total
             </span>
 
-            <span class="text-3xl font-black text-[#D90429]">
+            <span class="text-3xl font-black text-[#E50914]">
               {{ formatPrice(subtotal) }}
             </span>
           </div>
 
           <router-link
             to="/checkout"
-            class="block w-full mt-6 bg-[#D90429] hover:bg-red-700 text-white px-6 py-4 rounded-2xl text-center font-black transition shadow-xl shadow-black/30"
+            class="block w-full mt-6 bg-[#E50914] hover:bg-red-700 text-white px-6 py-4 rounded-2xl text-center font-black transition shadow-xl shadow-black/30"
           >
             Proceed to Checkout
           </router-link>
@@ -233,7 +233,7 @@ const deliveryEstimate = computed(() => {
 
         <router-link
           to="/products"
-          class="inline-block mt-6 bg-[#D90429] hover:bg-red-700 text-white px-7 py-4 rounded-2xl font-black transition"
+          class="inline-block mt-6 bg-[#E50914] hover:bg-red-700 text-white px-7 py-4 rounded-2xl font-black transition"
         >
           Browse Products
         </router-link>

@@ -14,7 +14,7 @@ const supportCards = [
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#06080c] text-white">
+  <div class="storefront-page min-h-screen pt-24 bg-[#06080c] text-white">
     <section class="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_20%_20%,rgba(220,38,38,.32),transparent_26rem),linear-gradient(135deg,#07090d,#17202d_55%,#05070a)]">
       <div class="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
         <div>

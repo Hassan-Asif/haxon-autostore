@@ -46,7 +46,7 @@ const track = async () => {
 }
 </script>
 <template>
-  <div class="min-h-screen bg-[#080a0d] text-[#F5F5F2]">
+  <div class="storefront-page min-h-screen pt-24 bg-[#080a0d] text-[#F5F5F2]">
     <section class="relative overflow-hidden px-6 py-20"><div class="absolute inset-0 bg-[radial-gradient(circle_at_75%_15%,rgba(220,38,38,.18),transparent_32%),linear-gradient(135deg,#111827,#05070a)]"></div><div class="relative mx-auto max-w-6xl"><p class="text-xs uppercase tracking-[.45em] text-white/45">Precision tracking</p><h1 class="mt-4 max-w-4xl text-6xl font-black tracking-[-.06em] md:text-8xl">Locate your Haxon order.</h1><p class="mt-6 max-w-2xl text-lg text-white/55">Search by order number only, phone only, or combine both for a tighter match. Phone matching handles common +92 / 92 / 0 formats.</p>
       <div class="mt-10 grid gap-3 rounded-[2rem] border border-white/10 bg-black/30 p-4 backdrop-blur md:grid-cols-[1fr_1fr_auto]"><input v-model="orderNumber" placeholder="HXN-2026-123456" class="input" @keyup.enter="track"/><input v-model="phone" placeholder="03XX XXXXXXX or +92..." class="input" @keyup.enter="track"/><button class="rounded-2xl bg-white px-8 py-4 font-black uppercase tracking-[.16em] text-black" @click="track">{{ loading ? 'Checking...' : 'Track' }}</button></div><p v-if="error" class="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-amber-100">{{ error }}</p></div></section>
     <section class="mx-auto max-w-6xl px-6 pb-20">
