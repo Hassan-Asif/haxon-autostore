@@ -9,7 +9,7 @@ import 'vue-sonner/style.css'
 
 <template>
   <div
-    class="min-h-screen bg-[#121212] text-white flex flex-col"
+    class="min-h-screen bg-[#050608] text-white flex flex-col"
   >
     <Navbar />
 
