@@ -2,6 +2,7 @@
 import CinematicHero from '../components/home/CinematicHero.vue'
 import CategorySlider from '../components/home/CategorySlider.vue'
 import CarFitmentSlider from '../components/home/CarFitmentSlider.vue';
+import HaxonStandardSection from '../components/home/HaxonStandardSection.vue';
 </script>
 
 <template>
@@ -9,5 +10,6 @@ import CarFitmentSlider from '../components/home/CarFitmentSlider.vue';
     <CinematicHero />
     <CategorySlider />
     <CarFitmentSlider/>
+    <HaxonStandardSection/>
   </main>
 </template>
