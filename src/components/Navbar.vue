@@ -27,8 +27,8 @@ const storeLinks = [
   { label: 'Shop', to: '/products' },
   { label: 'Brands', to: '/brands' },
   { label: 'Categories', to: '/categories' },
-  { label: 'Haxon Standard', to: '/standard' },
-  { label: 'About Us', to: '/about' },
+  // { label: 'Haxon Standard', to: '/standard' },
+  // { label: 'About Us', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ]
 
