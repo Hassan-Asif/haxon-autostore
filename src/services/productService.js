@@ -90,12 +90,22 @@ export const validateProductPayload = async (payload, currentId = '') => {
 }
 
 export const getProducts = async ({ includeInactive = false } = {}) => {
-  const snapshot = await getDocs(query(collection(db, 'products'), orderBy('sortOrder', 'asc')))
-  return snapshot.docs.map((item) => normalizeProduct(item.data(), item.id)).filter((product) => includeInactive || (product.active && !product.archived && product.status !== 'draft'))
+  try {
+    const snapshot = await getDocs(query(collection(db, 'products'), orderBy('sortOrder', 'asc')))
+    return snapshot.docs.map((item) => normalizeProduct(item.data(), item.id)).filter((product) => includeInactive || (product.active && !product.archived && product.status !== 'draft'))
+  } catch (err) {
+    console.error('[Firestore] products read failed', { code: err?.code, message: err?.message })
+    throw err
+  }
 }
 export const getAdminProducts = async () => {
-  const snapshot = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc'))).catch(async () => getDocs(collection(db, 'products')))
-  return snapshot.docs.map((item) => normalizeProduct(item.data(), item.id))
+  try {
+    const snapshot = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc'))).catch(async () => getDocs(collection(db, 'products')))
+    return snapshot.docs.map((item) => normalizeProduct(item.data(), item.id))
+  } catch (err) {
+    console.error('[Firestore] products admin read failed', { code: err?.code, message: err?.message })
+    throw err
+  }
 }
 export const getProductById = async (id) => { const snap = await getDoc(doc(db, 'products', id)); return snap.exists() ? normalizeProduct(snap.data(), snap.id) : null }
 export const createProduct = async (payload) => { const data = await validateProductPayload(payload); const ref = await addDoc(collection(db, 'products'), { ...data, createdAt: serverTimestamp() }); return ref.id }

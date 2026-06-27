@@ -19,8 +19,25 @@ const managers = [
 const active = ref('heroSlides'); const loading = ref(false); const saving = ref(false); const uploadProgress = ref(0); const rows = reactive({ heroSlides: [], categoryTiles: [], brandTiles: [], brands: [], catalogs: [], trustItems: [], cars: [], categories: [], pages: [] })
 const form = ref({ active: true, sortOrder: 1 }); const editingId = ref(null); const settings = ref({ ...fallbackSiteSettings }); const signature = ref({ ...fallbackSignatureShowcase })
 const current = () => managers.find((m) => m.key === active.value)
-const load = async () => { loading.value = true; try { const [site, showcase] = await Promise.all([getContentDoc('siteSettings', 'general'), getContentDoc('signatureShowcase', 'main')]); if (site) settings.value = { ...fallbackSiteSettings, ...site }; if (showcase) signature.value = { ...fallbackSignatureShowcase, ...showcase }; await Promise.all(managers.map(async (m) => { rows[m.key] = await listContent(m.key) })) } catch(e){ toast.error(e.message || 'Unable to load content') } finally { loading.value = false } }
-const edit = (row) => { editingId.value = row.id; form.value = { active: true, sortOrder: 1, ...row } }
+const load = async () => { loading.value = true; try { const [site, showcase] = await Promise.all([getContentDoc('siteSettings', 'general'), getContentDoc('signatureShowcase', 'main')]); if (site) settings.value = { ...fallbackSiteSettings, ...site }; if (showcase) signature.value = { ...fallbackSignatureShowcase, ...showcase }; await Promise.all(managers.map(async (m) => { rows[m.key] = await listContent(m.key) })) } catch(e){ console.error('[Admin CMS] content load failed', { code: e?.code, message: e?.message }); toast.error(e.message || 'Unable to load content') } finally { loading.value = false } }
+const edit = (row) => {
+  editingId.value = row.id
+  form.value = active.value === 'aboutPage' ? {
+    active: row.active !== false,
+    sortOrder: row.sortOrder || 1,
+    title: row.title || 'About Page',
+    slug: row.slug || 'about',
+    heroEyebrow: row.hero?.eyebrow || '',
+    heroTitle: row.hero?.title || row.title || '',
+    heroSubtitle: row.hero?.subtitle || '',
+    sectionOneTitle: row.sections?.[0]?.title || '',
+    sectionOneBody: row.sections?.[0]?.body || '',
+    quote: row.sections?.find((section) => section.type === 'quote')?.quote || '',
+    ctaTitle: row.cta?.title || '',
+    ctaLabel: row.cta?.label || '',
+    ctaLink: row.cta?.link || '',
+  } : { active: true, sortOrder: 1, ...row }
+}
 const reset = () => { editingId.value = null; form.value = { active: true, sortOrder: rows[active.value]?.length + 1 || 1 } }
 const normalizeSavePayload = () => active.value === 'pages' ? {
   title: form.value.title || 'About Page',
