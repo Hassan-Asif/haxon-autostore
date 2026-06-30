@@ -25,6 +25,12 @@ import {
 import { FALLBACK_IMAGE } from './catalog'
 import { activeSorted, normalizeCar, normalizeCmsCategory } from './cmsUtils'
 
+/**
+ * Turn this off later when debugging is done.
+ */
+// TODO: to turn off when deploying 
+const DEBUG_FIRESTORE_CONTENT = true
+
 const CONTENT_COLLECTIONS = [
   'heroSlides',
   'categoryTiles',
@@ -36,7 +42,7 @@ const CONTENT_COLLECTIONS = [
   'catalogs',
 ]
 
-const EMPTY_LIST_FALLBACKS = {
+const FALLBACK_LISTS = {
   heroSlides: fallbackHeroSlides,
   categoryTiles: fallbackCategoryTiles,
   categories: fallbackCategoryTiles,
@@ -47,9 +53,54 @@ const EMPTY_LIST_FALLBACKS = {
   catalogs: [],
 }
 
+const fallbackStorefrontContent = {
+  siteSettings: fallbackSiteSettings,
+  heroSlides: fallbackHeroSlides,
+  categoryTiles: fallbackCategoryTiles,
+  categories: fallbackCategoryTiles,
+  cars: fallbackCars,
+  aboutPage: fallbackAboutPage,
+  signatureShowcase: fallbackSignatureShowcase,
+  brandTiles: fallbackBrandTiles,
+  trustItems: fallbackTrustItems,
+  brands: [],
+  catalogs: [],
+  usingFallback: true,
+}
+
+/**
+ * Small helpers
+ */
 const text = (value, fallback = '') => String(value || fallback || '').trim()
 
 const normalizeImage = (value) => text(value, FALLBACK_IMAGE)
+
+const removeEditorOnlyFields = (payload = {}) => {
+  return Object.fromEntries(
+    Object.entries(payload).filter(([key, value]) => {
+      return !key.endsWith('File') && key !== 'id' && value !== undefined
+    }),
+  )
+}
+
+/**
+ * Debug logger
+ *
+ * You can comment this whole function out later,
+ * or simply set DEBUG_FIRESTORE_CONTENT = false.
+ */
+const logContentDebug = (label, data) => {
+  if (!DEBUG_FIRESTORE_CONTENT) return
+
+  console.groupCollapsed(`[Firestore Debug] ${label}`)
+  console.log(data)
+
+  if (Array.isArray(data)) {
+    console.table(data)
+  }
+
+  console.groupEnd()
+}
 
 const logFirestoreError = (collectionName, operation, error) => {
   console.error(`[Firestore] ${collectionName} ${operation} failed`, {
@@ -58,8 +109,12 @@ const logFirestoreError = (collectionName, operation, error) => {
   })
 }
 
+/**
+ * Normalizers
+ */
 export const normalizeHeroSlide = (slide = {}) => ({
   ...slide,
+
   title: text(slide.title, 'Haxon automotive'),
   eyebrow: text(slide.eyebrow, 'Haxon select'),
   subtitle: text(
@@ -67,6 +122,7 @@ export const normalizeHeroSlide = (slide = {}) => ({
     'Premium automotive accessories with fitment support.',
   ),
   backgroundWord: text(slide.backgroundWord, 'HAXON'),
+
   image: normalizeImage(slide.image),
   imageAlt: text(slide.imageAlt, slide.title || 'Haxon hero'),
 
@@ -92,17 +148,21 @@ export const normalizeTile = (tile = {}) => {
 
   return {
     ...tile,
+
     title,
     name,
     description: text(tile.description, 'Curated premium accessories.'),
+
     image: normalizeImage(tile.image),
     imageAlt: text(tile.imageAlt, title),
+
     link: text(
       tile.link || tile.clickDestination || tile.externalUrl,
       tile.slug
         ? `/products?category=${encodeURIComponent(title)}`
         : '/products',
     ),
+
     sortOrder: Number(tile.sortOrder || 0),
     featured: tile.featured !== false,
     active: tile.active !== false,
@@ -116,31 +176,50 @@ export const normalizeSignature = (item = {}) => ({
   active: item.active !== false,
 })
 
-const getNormalizer = (collectionName) => {
-  if (collectionName === 'heroSlides') return normalizeHeroSlide
-  if (collectionName === 'cars') return normalizeCar
-  if (collectionName === 'categories') return normalizeCmsCategory
-  if (collectionName === 'categoryTiles') return normalizeCmsCategory
+const getCollectionNormalizer = (collectionName) => {
+  const normalizers = {
+    heroSlides: normalizeHeroSlide,
+    cars: normalizeCar,
+    categories: normalizeCmsCategory,
+    categoryTiles: normalizeCmsCategory,
+  }
 
-  return normalizeTile
+  return normalizers[collectionName] || normalizeTile
 }
 
 const normalizeList = (collectionName, docs = []) => {
-  const normalizer = getNormalizer(collectionName)
+  const normalizer = getCollectionNormalizer(collectionName)
 
-  return activeSorted(
-    docs.map((item) => ({
-      id: item.id,
-      ...item.data(),
-    })),
-  ).map(normalizer)
+  const rawItems = docs.map((item) => ({
+    id: item.id,
+    ...item.data(),
+  }))
+
+  const normalizedItems = activeSorted(rawItems).map(normalizer)
+
+  logContentDebug(`${collectionName} normalized`, normalizedItems)
+
+  return normalizedItems
 }
 
+/**
+ * Firestore readers
+ */
 const readList = async (collectionName) => {
   try {
-    const snap = await getDocs(
-      query(collection(db, collectionName), orderBy('sortOrder', 'asc')),
-    )
+    const collectionRef = collection(db, collectionName)
+    const collectionQuery = query(collectionRef, orderBy('sortOrder', 'asc'))
+    const snap = await getDocs(collectionQuery)
+
+    const rawDocs = snap.docs.map((item) => ({
+      id: item.id,
+      ...item.data(),
+    }))
+
+    logContentDebug(`${collectionName} fetched successfully`, {
+      count: snap.size,
+      docs: rawDocs,
+    })
 
     return normalizeList(collectionName, snap.docs)
   } catch (error) {
@@ -153,39 +232,47 @@ const readDoc = async (collectionName, id) => {
   try {
     const snap = await getDoc(doc(db, collectionName, id))
 
-    return snap.exists()
-      ? {
-          id: snap.id,
-          ...snap.data(),
-        }
-      : null
+    if (!snap.exists()) {
+      logContentDebug(`${collectionName}/${id} not found`, null)
+      return null
+    }
+
+    const data = {
+      id: snap.id,
+      ...snap.data(),
+    }
+
+    logContentDebug(`${collectionName}/${id} fetched successfully`, data)
+
+    return data
   } catch (error) {
     logFirestoreError(collectionName, 'read', error)
     throw error
   }
 }
 
-const normalizeContentPayload = (payload = {}) => {
+/**
+ * Storefront content
+ */
+const buildCollectionContent = (lists = []) => {
   return Object.fromEntries(
-    Object.entries(payload).filter(([key, value]) => {
-      return !key.endsWith('File') && key !== 'id' && value !== undefined
-    }),
+    CONTENT_COLLECTIONS.map((collectionName, index) => [
+      collectionName,
+      lists[index] || FALLBACK_LISTS[collectionName] || [],
+    ]),
   )
 }
 
-const fallbackStorefrontContent = {
-  siteSettings: fallbackSiteSettings,
-  heroSlides: fallbackHeroSlides,
-  categoryTiles: fallbackCategoryTiles,
-  categories: fallbackCategoryTiles,
-  cars: fallbackCars,
-  aboutPage: fallbackAboutPage,
-  signatureShowcase: fallbackSignatureShowcase,
-  brandTiles: fallbackBrandTiles,
-  trustItems: fallbackTrustItems,
-  brands: [],
-  catalogs: [],
-  usingFallback: true,
+const resolveCategoryTiles = (content) => {
+  if (content.categoryTiles.length > 0) return content.categoryTiles
+  if (content.categories.length > 0) return content.categories
+  return fallbackCategoryTiles
+}
+
+const resolveCategories = (content) => {
+  if (content.categories.length > 0) return content.categories
+  if (content.categoryTiles.length > 0) return content.categoryTiles
+  return fallbackCategoryTiles
 }
 
 export async function fetchStorefrontContent() {
@@ -197,28 +284,9 @@ export async function fetchStorefrontContent() {
       ...CONTENT_COLLECTIONS.map(readList),
     ])
 
-    const content = Object.fromEntries(
-      CONTENT_COLLECTIONS.map((collectionName, index) => [
-        collectionName,
-        lists[index] || [],
-      ]),
-    )
+    const content = buildCollectionContent(lists)
 
-    const categoryTiles =
-      content.categoryTiles.length > 0
-        ? content.categoryTiles
-        : content.categories.length > 0
-          ? content.categories
-          : fallbackCategoryTiles
-
-    const categories =
-      content.categories.length > 0
-        ? content.categories
-        : content.categoryTiles.length > 0
-          ? content.categoryTiles
-          : fallbackCategoryTiles
-
-    return {
+    const storefrontContent = {
       siteSettings: settings
         ? { ...fallbackSiteSettings, ...settings }
         : fallbackSiteSettings,
@@ -227,8 +295,8 @@ export async function fetchStorefrontContent() {
         ? content.heroSlides
         : fallbackHeroSlides,
 
-      categoryTiles,
-      categories,
+      categoryTiles: resolveCategoryTiles(content),
+      categories: resolveCategories(content),
 
       cars: content.cars.length ? content.cars : fallbackCars,
 
@@ -253,16 +321,26 @@ export async function fetchStorefrontContent() {
 
       usingFallback: false,
     }
+
+    logContentDebug('final storefront content', storefrontContent)
+    logContentDebug('final heroSlides returned to store', storefrontContent.heroSlides)
+
+    return storefrontContent
   } catch (error) {
     console.error('[Firestore] storefront content failed, using fallbacks', {
       code: error?.code,
       message: error?.message,
     })
 
+    logContentDebug('fallback storefront content', fallbackStorefrontContent)
+
     return fallbackStorefrontContent
   }
 }
 
+/**
+ * Admin/content helpers
+ */
 export const getContentDoc = readDoc
 
 export const listContent = async (collectionName) => {
@@ -272,12 +350,15 @@ export const listContent = async (collectionName) => {
 export const saveContent = async (collectionName, payload, id = null) => {
   try {
     const data = {
-      ...normalizeContentPayload(payload),
+      ...removeEditorOnlyFields(payload),
       updatedAt: serverTimestamp(),
     }
 
     if (id) {
       await setDoc(doc(db, collectionName, id), data, { merge: true })
+
+      logContentDebug(`${collectionName}/${id} updated successfully`, data)
+
       return id
     }
 
@@ -285,6 +366,8 @@ export const saveContent = async (collectionName, payload, id = null) => {
       ...data,
       createdAt: serverTimestamp(),
     })
+
+    logContentDebug(`${collectionName}/${ref.id} created successfully`, data)
 
     return ref.id
   } catch (error) {
@@ -296,6 +379,11 @@ export const saveContent = async (collectionName, payload, id = null) => {
 export const deleteContent = async (collectionName, id) => {
   try {
     await deleteDoc(doc(db, collectionName, id))
+
+    logContentDebug(`${collectionName}/${id} deleted successfully`, {
+      collectionName,
+      id,
+    })
   } catch (error) {
     logFirestoreError(collectionName, 'delete', error)
     throw error
